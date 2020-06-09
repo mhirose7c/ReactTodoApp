@@ -1,0 +1,131 @@
+
+$BRAND_BLUE:#6E98AE;
+$BRAND_WHITE: #DAE5EB;
+$LITGH_BLUE:#BFDAE9;
+$DARK_GRAY:#64686B;
+$LITGH_GRAY:#939A9E;
+$WHITE: #FFFFFF;
+
+$TEXT_COLOR:$DARK_GRAY;
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Avenir Next";
+    min-width: 1280px;
+    font-size: 14px;
+    color: $TEXT_COLOR;
+  }
+  
+  ul {
+    list-style: none;
+  }
+  
+  h1 {
+    font-family: "Avenir Next";
+    font-size: 56px;
+    font-weight: 400;
+    color: $BRAND_BLUE;
+    margin: 0;
+  }
+  
+  h2,
+  h3 {
+    font-family: "Lato";
+    color: $TEXT_COLOR;
+    font-weight: 300;
+    margin: 0;
+  }
+  
+  h2 {
+    font-size: 24px;
+  }
+  
+  h3 {
+    font-size: 20px;
+    border-bottom: 1px solid $WHITE;
+    line-height: 64px;
+  }
+  
+  .main {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+  
+  .category-continer{
+    margin: 0 1 auto;
+    padding: 10px 0;
+    max-width: 600px;
+  }
+
+  .category-wrapper input{
+      width: 100%;
+      padding: 10px;
+      font-size: 12px;
+      border-radius: 5px;
+      border: solid 1px $LITGH_GRAY;
+      box-sizing: border-box;
+  }
+
+  .category-item {
+      margin-bottom: 10px;
+  }
+  .category-label-wrapper {
+      margin-bottom: 10px;
+      background-color: $BRAND_WHITE;
+      border-radius: 5px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+  }
+
+  .category-label {
+      vertical-align: middle;
+      margin: 15px;
+      width: 100%;
+  }
+
+  .category-config-button {
+      float: right;
+      width: 24px;
+      height: 24px;
+      background-color: $LITGH_GRAY;
+      border-radius: 5px;
+      color: $WHITE;
+      font-size: 18px;
+      padding: 0;
+  }
+
+  .task-wrapper p {
+    display: inline;
+  }
+
+  .task-wrapper ul li {
+      background-color: $WHITE;
+      border-radius: 15px;
+      padding: 0px;
+      margin: 10px;
+  }
+
+  input[type=checkbox] {
+      width: 15px;
+      height: 15px;
+      border: solid 1px $LITGH_GRAY;
+  }
+
+  input[type=text] {
+      width: 80%;
+      display: inline-block;
+  }
+
+  .task-delete-button{
+    float: right;
+    width: 24px;
+    height: 24px;
+    background-color: $BRAND_WHITE;
+    border-radius: 5px;
+    color: $WHITE;
+    padding: 0px;
+    font-size: 18px;
+  }

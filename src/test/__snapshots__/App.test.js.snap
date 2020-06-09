@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches to the snapshot 1`] = `
+<div>
+  <div
+    className="main-wrapper"
+  >
+    <div
+      className="main"
+    >
+      <div
+        className="copy-container"
+      >
+        <h1>
+          Todo
+        </h1>
+        <h2>
+          カテゴリー別にタスクを管理する
+        </h2>
+      </div>
+      <div
+        className="category-continer"
+      >
+        <div
+          className="category-wrapper"
+        >
+          <ul>
+            <li
+              className="category-item"
+            >
+              <input
+                onBlur={[Function]}
+                onChange={[Function]}
+                placeholder="カテゴリーの追加"
+                value=""
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

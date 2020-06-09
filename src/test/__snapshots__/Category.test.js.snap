@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches to the snapshot 1`] = `
+<div
+  className="category-wrapper"
+>
+  <ul>
+    <li
+      className="category-item"
+    >
+      <input
+        onBlur={[Function]}
+        onChange={[Function]}
+        placeholder="カテゴリーの追加"
+        value=""
+      />
+    </li>
+  </ul>
+</div>
+`;
