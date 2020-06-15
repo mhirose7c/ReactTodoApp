@@ -1,5 +1,11 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Todo App
+### Sample UI
+<img src="https://user-images.githubusercontent.com/49217216/84637211-679f3700-af30-11ea-9bfa-e3d3a64cfde2.png" width="600" />
+
+---
+
 ## Available Scripts
 
 In the project directory, you can run:
