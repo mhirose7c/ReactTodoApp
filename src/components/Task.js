@@ -1,159 +1,143 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Db from "../db";
 
-const STATUS = {TODO: "todo", DONE: "done"};
+const STATUS = { TODO: "todo", DONE: "done" };
 const DEFAULT_PLACEHOLDER = "タスクの追加";
 
-class Task extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      rows: [],
-      inputTarget: null,
-      taskName: "",
-    };
-    this.addTask = this.addTask.bind(this);
-    this.updateTask = this.updateTask.bind(this);
-    this.deleteTask = this.deleteTask.bind(this);
-    this.addTaskName = this.addTaskName.bind(this);
-    this.updateTaskName = this.updateTaskName.bind(this);
-    this.deleteTaskItem = this.deleteTaskItem.bind(this);
-    this.inputTaskName = this.inputTaskName.bind(this);
-    this.targetChange = this.targetChange.bind(this);
-    this.renderAllTasks();
-  }
-  async renderAllTasks() {
-    const tasks = await Db.findByIndexKey(
-      "task",
-      "category_id",
-      this.props.category_id
-    );
-    this.setState({ rows: tasks });
-  }
+export default function Task(props) {
+  const [rows, setRows] = useState([]);
+  const [inputTarget, setInputTarget] = useState(null);
+  const [taskName, setTaskName] = useState("");
+  const [category_id] = useState(props.category_id);
 
-  async addTask(task_name) {
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await Db.findByIndexKey(
+        "task",
+        "category_id",
+        category_id
+      );
+      setRows(result);
+    };
+    fetchData();
+  }, [rows]);
+
+  function handleAddData(e) {
+    if (e.target.value.length == 0) {
+      return;
+    }
     const newItem = Object.assign(
       {},
-      { category_id: this.props.category_id, name: task_name, status: STATUS.TODO }
+      {
+        category_id: category_id,
+        name: e.target.value,
+        status: STATUS.TODO,
+      }
     );
-    const id = await Db.add("task", newItem);
-    newItem.id = id;
-    this.state.rows.push(newItem);
-    this.setState({ rows: this.state.rows });
-    this.setState({ taskName: "" });
+    const addData = async () => {
+      const result = await Db.add("task", newItem);
+      return result;
+    };
+    addData();
+    setInputTarget(null);
+    setTaskName("");
   }
 
-  async updateTask(data) {
-    await Db.update("task", data);
-    this.setState({ inputTarget: null });
-    this.setState({ taskName: "" });
-  }
-
-  async deleteTask(id) {
-    await Db.delete("task", id);
-    this.setState({ rows: [] });
-    this.renderAllTasks()
-    this.setState({ inputTarget: null });
-    this.setState({ taskName: "" });
-  }
-
-  addTaskName(e) {
-    if(e.target.value == 0) {
-      return
-    }
-    this.addTask(e.target.value);
-  }
-
-  updateTaskName(e) {
+  function handleUpdateData(e) {
     const id = e.target.dataset.taskId;
     const name = e.target.value;
-    if(name.length == 0) {
-      return
+    if (name.length == 0) {
+      return;
     }
     var targetdata;
-    this.state.rows.forEach((item) => {
+    rows.forEach((item) => {
       if (item.id == id) {
         item.name = name;
         targetdata = item;
       }
     });
-    this.updateTask(targetdata);
+    const updateData = async () => {
+      const result = await Db.update("task", targetdata);
+      return result;
+    };
+    updateData();
+    setInputTarget(null);
+    setTaskName("");
   }
 
-  deleteTaskItem(e){
-    const id = e.target.dataset.taskId;
-    this.deleteTask(parseInt(id));
+  function handleDeleteData(e) {
+    const id = parseInt(e.target.dataset.taskId);
+    const deleteData = async () => {
+      await Db.delete("task", id);
+    };
+    deleteData();
+    setInputTarget(null);
+    setTaskName("");
   }
 
-  inputTaskName(e) {
-    this.setState({ taskName: e.target.value });
+  function handleChangeValue(e) {
+    setTaskName(e.target.value);
   }
 
-  targetChange(e) {
-    this.setState({ inputTarget: e.target.dataset.taskId });
-    this.setState({ taskName: e.target.dataset.taskName });
-  }
-
-  render() {
-    let tasks;
-    let addTask;
-    // 編集時は追加のinputを非表示にする
-    if (this.state.inputTarget === null) {
-      addTask = (
-        <li>
-          <input
-            placeholder={DEFAULT_PLACEHOLDER}
-            value={this.state.taskName}
-            onChange={this.inputTaskName}
-            onBlur={this.addTaskName}
-          />
-        </li>
-      );
-    }
-    tasks = (
-      <ul>
-        {this.state.rows.map((task) => {
-          if (this.state.inputTarget == task.id) {
-            return (
-              <li>
-                <input type="checkbox" />
-                <input
-                  type="text"
-                  placeholder={DEFAULT_PLACEHOLDER}
-                  value={this.state.taskName}
-                  data-task-id={task.id}
-                  onChange={this.inputTaskName}
-                  onBlur={this.updateTaskName}
-                />
-              </li>
-            );
-          } else {
-            return (
-              <li>
-                <input id={task.id} type="checkbox" />
-                <p
-                  data-task-id={task.id}
-                  data-task-name={task.name}
-                  onClick={this.targetChange}
-                >
-                  {task.name}
-                  <button
-                    data-task-id={task.id}
-                    className="task-delete-button"
-                    onClick={this.deleteTaskItem}
-                  >
-                    ×
-                  </button>
-                </p>
-              </li>
-            );
-          }
-        })}
-        {addTask}
-      </ul>
+  let tasks;
+  let addTask;
+  // 編集時は追加のinputを非表示にする
+  if (inputTarget === null) {
+    addTask = (
+      <li>
+        <input
+          placeholder={DEFAULT_PLACEHOLDER}
+          value={taskName}
+          onChange={handleChangeValue}
+          onBlur={handleAddData}
+        />
+      </li>
     );
-    return <div className="task-wrapper">{tasks}</div>;
   }
+  tasks = (
+    <ul>
+      {rows.map((task) => {
+        if (inputTarget == task.id) {
+          return (
+            <li key={task.id}>
+              <input type="checkbox" />
+              <input
+                type="text"
+                placeholder={DEFAULT_PLACEHOLDER}
+                value={taskName}
+                data-task-id={task.id}
+                onChange={handleChangeValue}
+                onBlur={handleUpdateData}
+              />
+            </li>
+          );
+        } else {
+          return (
+            <li key={task.id}>
+              <input id={task.id} type="checkbox" />
+              <p
+                data-task-id={task.id}
+                data-task-name={task.name}
+                onClick={() => {
+                  setInputTarget(task.id);
+                  setTaskName(task.name);
+                }}
+              >
+                {task.name}
+                <button
+                  data-task-id={task.id}
+                  className="task-delete-button"
+                  onClick={handleDeleteData}
+                >
+                  ×
+                </button>
+              </p>
+            </li>
+          );
+        }
+      })}
+      {addTask}
+    </ul>
+  );
+  return <div className="task-wrapper">{tasks}</div>;
 }
-
-export default Task;
