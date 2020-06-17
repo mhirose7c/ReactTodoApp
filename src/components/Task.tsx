@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
-import Db from "../db";
+import Db, { TaskType } from "../db";
 
 const STATUS = { TODO: "todo", DONE: "done" };
 const DEFAULT_PLACEHOLDER = "タスクの追加";
 
-export default function Task(props) {
-  const [rows, setRows] = useState([]);
-  const [inputTarget, setInputTarget] = useState(null);
+interface Prop {
+  category_id: number;
+}
+
+export default function Task(props: Prop) {
+  const [rows, setRows] = useState<TaskType[]>([]);
+  const [inputTarget, setInputTarget] = useState(-1);
   const [taskName, setTaskName] = useState("");
   const [category_id] = useState(props.category_id);
 
@@ -17,20 +21,21 @@ export default function Task(props) {
         "category_id",
         category_id
       );
-      setRows(result);
+      setRows(result as TaskType[]);
     };
     fetchData();
   }, [rows]);
 
-  function handleAddData(e) {
-    if (e.target.value.length == 0) {
+  function handleAddData(e: React.ChangeEvent<HTMLInputElement>) {
+    const { value } = e.currentTarget;
+    if (value.length == 0) {
       return;
     }
     const newItem = Object.assign(
       {},
       {
         category_id: category_id,
-        name: e.target.value,
+        name: value,
         status: STATUS.TODO,
       }
     );
@@ -39,17 +44,17 @@ export default function Task(props) {
       return result;
     };
     addData();
-    setInputTarget(null);
+    setInputTarget(-1);
     setTaskName("");
   }
 
-  function handleUpdateData(e) {
-    const id = e.target.dataset.taskId;
-    const name = e.target.value;
+  function handleUpdateData(e: React.FocusEvent<HTMLInputElement>) {
+    const id = parseId(e.currentTarget.dataset.taskId);
+    const name = e.currentTarget.value;
     if (name.length == 0) {
       return;
     }
-    var targetdata;
+    var targetdata: TaskType;
     rows.forEach((item) => {
       if (item.id == id) {
         item.name = name;
@@ -61,28 +66,34 @@ export default function Task(props) {
       return result;
     };
     updateData();
-    setInputTarget(null);
+    setInputTarget(-1);
     setTaskName("");
   }
-
-  function handleDeleteData(e) {
-    const id = parseInt(e.target.dataset.taskId);
+  function handleDeleteData(e: React.MouseEvent<HTMLElement>) {
+    const id = parseId(e.currentTarget.dataset.taskId);
+    if (id == -1) {
+      return;
+    }
     const deleteData = async () => {
       await Db.delete("task", id);
     };
     deleteData();
-    setInputTarget(null);
+    setInputTarget(-1);
     setTaskName("");
   }
 
-  function handleChangeValue(e) {
+  function handleChangeValue(e: React.ChangeEvent<HTMLInputElement>) {
     setTaskName(e.target.value);
+  }
+
+  function parseId(target: string | undefined): number {
+    return target ? parseInt(target) : -1;
   }
 
   let tasks;
   let addTask;
   // 編集時は追加のinputを非表示にする
-  if (inputTarget === null) {
+  if (inputTarget === -1) {
     addTask = (
       <li>
         <input
@@ -96,7 +107,7 @@ export default function Task(props) {
   }
   tasks = (
     <ul>
-      {rows.map((task) => {
+      {rows.map((task: TaskType) => {
         if (inputTarget == task.id) {
           return (
             <li key={task.id}>
@@ -114,7 +125,7 @@ export default function Task(props) {
         } else {
           return (
             <li key={task.id}>
-              <input id={task.id} type="checkbox" />
+              <input type="checkbox" />
               <p
                 data-task-id={task.id}
                 data-task-name={task.name}

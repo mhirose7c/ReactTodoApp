@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from "react";
-import Db from "../db";
+import React, { useState, useEffect, MouseEvent } from "react";
+import Db, { CategoryType, TaskType } from "../db";
 import Task from "./Task";
 
 const DEFAULT_PLACEHOLDER = "カテゴリーの追加";
 
-export default function CategoryItems(props) {
-  const [rows, setRows] = useState([]);
-  const [inputTarget, setInputTarget] = useState(null);
+export default function CategoryItems() {
+  const [rows, setRows] = useState<CategoryType[]>([]);
+  const [inputTarget, setInputTarget] = useState(-1);
   const [categoryName, setCategoryName] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       const result = await Db.getAll("category");
-      setRows(result);
+      setRows(result as CategoryType[]);
     };
     fetchData();
   }, [rows]);
 
-  function handleAddData(e) {
-    const name = e.target.value;
-    if (name.length == 0){
+  function handleAddData(e: React.ChangeEvent<HTMLInputElement>) {
+    const {value} = e.currentTarget
+    const name: string = value;
+    if (name.length == 0) {
       return;
     }
     const newItem = Object.assign({}, { name: name });
@@ -28,15 +29,22 @@ export default function CategoryItems(props) {
       return result;
     };
     addData();
-    setInputTarget(null);
+    setInputTarget(-1);
     setCategoryName("");
   }
+  function parseId(target: string | undefined): number {
+    return target ? parseInt(target) : -1;
+  };
 
-  function handleUpdateData(e) {
-    const id = e.target.dataset.categoryId;
-    const name = e.target.value;
-    var targetdata;
-    rows.forEach((item) => {
+  function handleUpdateData(e: React.FocusEvent<HTMLInputElement>) {
+    const {value, dataset} = e.currentTarget;
+    const id = parseId(dataset.categoryId);
+    const name = value;
+    if (id == -1){
+      return;
+    }
+    var targetdata: CategoryType;
+    rows.forEach((item: CategoryType) => {
       if (item.id == id) {
         item.name = name;
         targetdata = item;
@@ -47,32 +55,33 @@ export default function CategoryItems(props) {
       return result;
     };
     updateData();
-    setInputTarget(null);
+    setInputTarget(-1);
     setCategoryName("");
   }
 
-  function handleDeleteData(e) {
-    const id = parseInt(e.target.dataset.categoryId);
+  function handleDeleteData(e: React.MouseEvent<HTMLElement>) {
+    const id = parseId(e.currentTarget.dataset.categoryId);
     const deleteData = async () => {
       await Db.delete("category", id);
-      const tasks = await Db.findByIndexKey("task", "category_id", id);
-      tasks.forEach((task) => {
+      const tasks = await Db.findByIndexKey("task", "category_id", id) as TaskType[];
+      tasks.forEach((task: TaskType) => {
         Db.delete("task", task.id);
       });
     };
     deleteData();
-    setInputTarget(null);
+    setInputTarget(-1);
     setCategoryName("");
   }
 
-  function handleChangeValue(e) {
-    setCategoryName(e.target.value);
+  function handleChangeValue(e: React.ChangeEvent<HTMLInputElement>) {
+    const { value } = e.currentTarget;
+    setCategoryName(value);
   }
 
   let categoryItems;
   let addCategory;
   // 編集時はカテゴリの追加を非表示にする
-  if (inputTarget === null) {
+  if (inputTarget === -1) {
     addCategory = (
       <li className="category-item">
         <input
@@ -86,7 +95,7 @@ export default function CategoryItems(props) {
   }
   categoryItems = (
     <ul>
-      {rows.map((category) => {
+      {rows.map((category: CategoryType) => {
         if (inputTarget == category.id) {
           return (
             <li className="category-item" key={category.id}>
@@ -102,7 +111,7 @@ export default function CategoryItems(props) {
           );
         } else {
           return (
-            <li className="category-item"  key={category.id}>
+            <li className="category-item" key={category.id}>
               <div className="category-label-wrapper">
                 <div
                   data-category-id={category.id}
