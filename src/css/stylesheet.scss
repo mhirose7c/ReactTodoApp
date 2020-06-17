@@ -85,16 +85,18 @@ body {
       margin: 15px;
       width: 100%;
   }
-
+  .category-config-button, .task-delete-button {
+    float: right;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    color: $WHITE;
+    font-size: 18px;
+    padding: 0;
+    border: 0px;
+}
   .category-config-button {
-      float: right;
-      width: 24px;
-      height: 24px;
       background-color: $LITGH_GRAY;
-      border-radius: 5px;
-      color: $WHITE;
-      font-size: 18px;
-      padding: 0;
   }
 
   .task-wrapper p {
@@ -120,12 +122,5 @@ body {
   }
 
   .task-delete-button{
-    float: right;
-    width: 24px;
-    height: 24px;
     background-color: $BRAND_WHITE;
-    border-radius: 5px;
-    color: $WHITE;
-    padding: 0px;
-    font-size: 18px;
   }
