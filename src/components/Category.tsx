@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MouseEvent } from "react";
+import React, { useState, useEffect } from "react";
 import Db, { CategoryType, TaskType } from "../db";
 import Task from "./Task";
 
@@ -18,7 +18,7 @@ export default function CategoryItems() {
   }, [rows]);
 
   function handleAddData(e: React.ChangeEvent<HTMLInputElement>) {
-    const {value} = e.currentTarget
+    const { value } = e.currentTarget;
     const name: string = value;
     if (name.length == 0) {
       return;
@@ -34,13 +34,13 @@ export default function CategoryItems() {
   }
   function parseId(target: string | undefined): number {
     return target ? parseInt(target) : -1;
-  };
+  }
 
   function handleUpdateData(e: React.FocusEvent<HTMLInputElement>) {
-    const {value, dataset} = e.currentTarget;
+    const { value, dataset } = e.currentTarget;
     const id = parseId(dataset.categoryId);
     const name = value;
-    if (id == -1){
+    if (id == -1) {
       return;
     }
     var targetdata: CategoryType;
@@ -63,7 +63,11 @@ export default function CategoryItems() {
     const id = parseId(e.currentTarget.dataset.categoryId);
     const deleteData = async () => {
       await Db.delete("category", id);
-      const tasks = await Db.findByIndexKey("task", "category_id", id) as TaskType[];
+      const tasks = (await Db.findByIndexKey(
+        "task",
+        "category_id",
+        id
+      )) as TaskType[];
       tasks.forEach((task: TaskType) => {
         Db.delete("task", task.id);
       });

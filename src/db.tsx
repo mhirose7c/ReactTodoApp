@@ -6,7 +6,7 @@ const store_constants: StoreContent[] = [
   {
     name: "category",
     keyPath: "id",
-    autoIncrement: true ,
+    autoIncrement: true,
     indexes: [
       { indexName: "name", unique: false },
       { indexName: "description", unique: false },
@@ -17,7 +17,7 @@ const store_constants: StoreContent[] = [
   {
     name: "task",
     keyPath: "id",
-    autoIncrement: true ,
+    autoIncrement: true,
     indexes: [
       { indexName: "category_id", unique: false },
       { indexName: "name", unique: false },
@@ -44,7 +44,7 @@ export type CategoryType = {
   description: string;
   limit: string;
   color: string;
-}
+};
 
 export interface TaskType {
   id: number;
@@ -66,10 +66,10 @@ const connectIDB = (resolve: any, reject: any) => {
     const db = event.target.result;
     for (const constants of store_constants) {
       if (!Array.from(db.objectStoreNames).includes(constants.name)) {
-        const objectStore = db.createObjectStore(
-          constants.name,
-          {keyPath: constants.keyPath, autoIncrement: constants.autoIncrement}
-        );
+        const objectStore = db.createObjectStore(constants.name, {
+          keyPath: constants.keyPath,
+          autoIncrement: constants.autoIncrement,
+        });
         for (const index of constants.indexes) {
           objectStore.createIndex(index.indexName, index.indexName, {
             unique: index.unique,
