@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Db, { CategoryType, TaskType } from "../db";
 import Task from "./Task";
+import {parseStringToNumber} from "../utils/StringUtil";
 
 const DEFAULT_PLACEHOLDER = "カテゴリーの追加";
 
@@ -32,13 +33,10 @@ export default function CategoryItems() {
     setInputTarget(-1);
     setCategoryName("");
   }
-  function parseId(target: string | undefined): number {
-    return target ? parseInt(target) : -1;
-  }
 
   function handleUpdateData(e: React.FocusEvent<HTMLInputElement>) {
     const { value, dataset } = e.currentTarget;
-    const id = parseId(dataset.categoryId);
+    const id = parseStringToNumber(dataset.categoryId);
     const name = value;
     if (id == -1) {
       return;
@@ -60,7 +58,7 @@ export default function CategoryItems() {
   }
 
   function handleDeleteData(e: React.MouseEvent<HTMLElement>) {
-    const id = parseId(e.currentTarget.dataset.categoryId);
+    const id = parseStringToNumber(e.currentTarget.dataset.categoryId);
     const deleteData = async () => {
       await Db.delete("category", id);
       const tasks = (await Db.findByIndexKey(

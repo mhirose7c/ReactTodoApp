@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Db, { TaskType } from "../db";
+import {parseStringToNumber} from "../utils/StringUtil";
 
 const STATUS = { TODO: "todo", DONE: "done" };
 const DEFAULT_PLACEHOLDER = "タスクの追加";
@@ -49,7 +50,7 @@ export default function Task(props: Prop) {
   }
 
   function handleUpdateData(e: React.FocusEvent<HTMLInputElement>) {
-    const id = parseId(e.currentTarget.dataset.taskId);
+    const id = parseStringToNumber(e.currentTarget.dataset.taskId);
     const name = e.currentTarget.value;
     if (name.length == 0) {
       return;
@@ -70,7 +71,7 @@ export default function Task(props: Prop) {
     setTaskName("");
   }
   function handleDeleteData(e: React.MouseEvent<HTMLElement>) {
-    const id = parseId(e.currentTarget.dataset.taskId);
+    const id = parseStringToNumber(e.currentTarget.dataset.taskId);
     if (id == -1) {
       return;
     }
@@ -84,10 +85,6 @@ export default function Task(props: Prop) {
 
   function handleChangeValue(e: React.ChangeEvent<HTMLInputElement>) {
     setTaskName(e.target.value);
-  }
-
-  function parseId(target: string | undefined): number {
-    return target ? parseInt(target) : -1;
   }
 
   let tasks;
