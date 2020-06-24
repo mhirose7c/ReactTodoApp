@@ -21,7 +21,7 @@ export default function CategoryItems() {
   function handleAddData(e: React.ChangeEvent<HTMLInputElement>) {
     const { value } = e.currentTarget;
     const name: string = value;
-    if (name.length == 0) {
+    if (name.length === 0) {
       return;
     }
     const newItem = Object.assign({}, { name: name });
@@ -38,13 +38,15 @@ export default function CategoryItems() {
     const { value, dataset } = e.currentTarget;
     const id = parseStringToNumber(dataset.categoryId);
     const name = value;
-    if (id == -1) {
+    if (id === -1) {
       return;
     }
     var targetdata: CategoryType;
     rows.forEach((item: CategoryType) => {
-      if (item.id == id) {
-        item.name = name;
+      if (item.id === id) {
+        if(name.length !== 0){
+          item.name = name;
+        }
         targetdata = item;
       }
     });
@@ -98,7 +100,7 @@ export default function CategoryItems() {
   categoryItems = (
     <ul>
       {rows.map((category: CategoryType) => {
-        if (inputTarget == category.id) {
+        if (inputTarget === category.id) {
           return (
             <li className="category-item" key={category.id}>
               <input

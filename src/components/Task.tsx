@@ -29,7 +29,7 @@ export default function Task(props: Prop) {
 
   function handleAddData(e: React.ChangeEvent<HTMLInputElement>) {
     const { value } = e.currentTarget;
-    if (value.length == 0) {
+    if (value.length === 0) {
       return;
     }
     const newItem = Object.assign(
@@ -52,13 +52,12 @@ export default function Task(props: Prop) {
   function handleUpdateData(e: React.FocusEvent<HTMLInputElement>) {
     const id = parseStringToNumber(e.currentTarget.dataset.taskId);
     const name = e.currentTarget.value;
-    if (name.length == 0) {
-      return;
-    }
     var targetdata: TaskType;
     rows.forEach((item) => {
-      if (item.id == id) {
-        item.name = name;
+      if (item.id === id) {
+        if(name.length !== 0){
+          item.name = name;
+        }
         targetdata = item;
       }
     });
@@ -72,7 +71,7 @@ export default function Task(props: Prop) {
   }
   function handleDeleteData(e: React.MouseEvent<HTMLElement>) {
     const id = parseStringToNumber(e.currentTarget.dataset.taskId);
-    if (id == -1) {
+    if (id === -1) {
       return;
     }
     const deleteData = async () => {
@@ -105,7 +104,7 @@ export default function Task(props: Prop) {
   tasks = (
     <ul>
       {rows.map((task: TaskType) => {
-        if (inputTarget == task.id) {
+        if (inputTarget === task.id) {
           return (
             <li key={task.id}>
               <input type="checkbox" />
