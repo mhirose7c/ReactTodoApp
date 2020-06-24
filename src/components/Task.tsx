@@ -25,7 +25,7 @@ export default function Task(props: Prop) {
       setRows(result as TaskType[]);
     };
     fetchData();
-  }, [rows]);
+  }, [rows, category_id]);
 
   function handleAddData(e: React.ChangeEvent<HTMLInputElement>) {
     const { value } = e.currentTarget;
