@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Db, { TaskType } from "../db";
+import {parseStringToNumber} from "../utils/StringUtil";
 
 const STATUS = { TODO: "todo", DONE: "done" };
 const DEFAULT_PLACEHOLDER = "タスクの追加";
@@ -24,11 +25,11 @@ export default function Task(props: Prop) {
       setRows(result as TaskType[]);
     };
     fetchData();
-  }, [rows]);
+  }, [rows, category_id]);
 
   function handleAddData(e: React.ChangeEvent<HTMLInputElement>) {
     const { value } = e.currentTarget;
-    if (value.length == 0) {
+    if (value.length === 0) {
       return;
     }
     const newItem = Object.assign(
@@ -49,15 +50,14 @@ export default function Task(props: Prop) {
   }
 
   function handleUpdateData(e: React.FocusEvent<HTMLInputElement>) {
-    const id = parseId(e.currentTarget.dataset.taskId);
+    const id = parseStringToNumber(e.currentTarget.dataset.taskId);
     const name = e.currentTarget.value;
-    if (name.length == 0) {
-      return;
-    }
     var targetdata: TaskType;
     rows.forEach((item) => {
-      if (item.id == id) {
-        item.name = name;
+      if (item.id === id) {
+        if(name.length !== 0){
+          item.name = name;
+        }
         targetdata = item;
       }
     });
@@ -70,8 +70,8 @@ export default function Task(props: Prop) {
     setTaskName("");
   }
   function handleDeleteData(e: React.MouseEvent<HTMLElement>) {
-    const id = parseId(e.currentTarget.dataset.taskId);
-    if (id == -1) {
+    const id = parseStringToNumber(e.currentTarget.dataset.taskId);
+    if (id === -1) {
       return;
     }
     const deleteData = async () => {
@@ -84,10 +84,6 @@ export default function Task(props: Prop) {
 
   function handleChangeValue(e: React.ChangeEvent<HTMLInputElement>) {
     setTaskName(e.target.value);
-  }
-
-  function parseId(target: string | undefined): number {
-    return target ? parseInt(target) : -1;
   }
 
   let tasks;
@@ -108,7 +104,7 @@ export default function Task(props: Prop) {
   tasks = (
     <ul>
       {rows.map((task: TaskType) => {
-        if (inputTarget == task.id) {
+        if (inputTarget === task.id) {
           return (
             <li key={task.id}>
               <input type="checkbox" />

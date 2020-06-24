@@ -1,6 +1,7 @@
-import React, { useState, useEffect, MouseEvent } from "react";
+import React, { useState, useEffect } from "react";
 import Db, { CategoryType, TaskType } from "../db";
 import Task from "./Task";
+import {parseStringToNumber} from "../utils/StringUtil";
 
 const DEFAULT_PLACEHOLDER = "カテゴリーの追加";
 
@@ -18,9 +19,9 @@ export default function CategoryItems() {
   }, [rows]);
 
   function handleAddData(e: React.ChangeEvent<HTMLInputElement>) {
-    const {value} = e.currentTarget
+    const { value } = e.currentTarget;
     const name: string = value;
-    if (name.length == 0) {
+    if (name.length === 0) {
       return;
     }
     const newItem = Object.assign({}, { name: name });
@@ -32,21 +33,20 @@ export default function CategoryItems() {
     setInputTarget(-1);
     setCategoryName("");
   }
-  function parseId(target: string | undefined): number {
-    return target ? parseInt(target) : -1;
-  };
 
   function handleUpdateData(e: React.FocusEvent<HTMLInputElement>) {
-    const {value, dataset} = e.currentTarget;
-    const id = parseId(dataset.categoryId);
+    const { value, dataset } = e.currentTarget;
+    const id = parseStringToNumber(dataset.categoryId);
     const name = value;
-    if (id == -1){
+    if (id === -1) {
       return;
     }
     var targetdata: CategoryType;
     rows.forEach((item: CategoryType) => {
-      if (item.id == id) {
-        item.name = name;
+      if (item.id === id) {
+        if(name.length !== 0){
+          item.name = name;
+        }
         targetdata = item;
       }
     });
@@ -60,10 +60,14 @@ export default function CategoryItems() {
   }
 
   function handleDeleteData(e: React.MouseEvent<HTMLElement>) {
-    const id = parseId(e.currentTarget.dataset.categoryId);
+    const id = parseStringToNumber(e.currentTarget.dataset.categoryId);
     const deleteData = async () => {
       await Db.delete("category", id);
-      const tasks = await Db.findByIndexKey("task", "category_id", id) as TaskType[];
+      const tasks = (await Db.findByIndexKey(
+        "task",
+        "category_id",
+        id
+      )) as TaskType[];
       tasks.forEach((task: TaskType) => {
         Db.delete("task", task.id);
       });
@@ -96,7 +100,7 @@ export default function CategoryItems() {
   categoryItems = (
     <ul>
       {rows.map((category: CategoryType) => {
-        if (inputTarget == category.id) {
+        if (inputTarget === category.id) {
           return (
             <li className="category-item" key={category.id}>
               <input
